@@ -1,3 +1,5 @@
+/* eslint-disable object-curly-newline */
+/* eslint-disable import/no-default-export */
 import { ReportHandler } from 'web-vitals';
 
 const reportWebVitals = (onPerfEntry?: ReportHandler) => {
