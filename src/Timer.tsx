@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import useSound from 'use-sound';
+import { Typography } from './common/Typography';
+import { convertHMS } from './helpers/time';
 
 import countDownSound from './assets/sounds/boop.mp3';
 import countDownFinishSound from './assets/sounds/pop-up-off.mp3';
+import { Theme } from './styles/theme';
 
 export const Timer = ({ interval, onTick, onFinish }: {
   interval: number,
-  onTick: () => void,
+  onTick?: () => void,
   onFinish: () => void
 }) => {
   const [time, setTime] = useState<number>(interval);
@@ -29,11 +32,13 @@ export const Timer = ({ interval, onTick, onFinish }: {
 
       onFinish();
     } else {
-      if (time <= 5) {
+      if (time <= 3) {
         playCowntDown();
       }
 
-      onTick();
+      if (onTick) {
+        onTick();
+      }
     }
   }, [time]);
 
@@ -42,6 +47,6 @@ export const Timer = ({ interval, onTick, onFinish }: {
   }, [interval]);
 
   return (
-    <h2>{time}</h2>
+    <Typography fontSize={8} fontWeight="bold" color={Theme.colors.white}>{convertHMS(time)}</Typography>
   );
 };

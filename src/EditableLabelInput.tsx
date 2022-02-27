@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Box } from './common/Box';
+import { Form, Input } from './common/Form';
 
 export const EditableLabelInput = ({ value, onSubmit } : {
   value: number,
@@ -11,9 +13,11 @@ export const EditableLabelInput = ({ value, onSubmit } : {
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => setlabelValue(parseInt(e.target.value, 10));
 
   return (
-    <form onSubmit={onFormSubmit}>
-      <input onChange={onInputChange} type="number" value={labelValue} />
-      <input type="submit" value="DONE" />
-    </form>
+    <Form onSubmit={onFormSubmit}>
+      <Box display="flex">
+        <Box mr={1} as={Input} onChange={onInputChange} flexGrow={1} type="number" value={labelValue} />
+        <Box as={Input} type="submit" value="Set" />
+      </Box>
+    </Form>
   );
 };

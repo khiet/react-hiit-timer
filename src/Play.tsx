@@ -1,16 +1,26 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Timer } from './Timer';
-import { convertHMS } from './helpers/time';
+import { TimerCircle } from './TimerCircle';
+import { calcSum, convertHMS } from './helpers/time';
 import { StepCard } from './StepCard';
+import { Box } from './common/Box';
+import { Finish } from './Finish';
+import { Theme } from './styles/theme';
+import { Typography } from './common/Typography';
+import { TimeRemaning } from './TimeRemaining';
+import { PauseButton } from './PauseButton';
 
+// eslint-disable-next-line no-unused-vars
 const DebugInfo = ({
+  prepare,
   workInterval,
   restInterval,
   exercise,
   round,
   sum,
 }: {
+  prepare: number;
   workInterval: number;
   restInterval: number;
   exercise: number;
@@ -18,45 +28,66 @@ const DebugInfo = ({
   sum: number;
 }) => (
   <div style={{ position: 'absolute', bottom: 0, left: 0 }}>
+    <div>Prepare: {prepare}</div>
     <div>Work: {workInterval}</div>
     <div>Rest: {restInterval}</div>
     <div>Excercises: {exercise}</div>
     <div>Rounds: {round}</div>
-    <div>Sum: {convertHMS(sum.toString())}</div>
+    <div>Sum: {convertHMS(sum)}</div>
   </div>
 );
+
+const bgColor = (isPreparing: boolean, isWork: boolean) => {
+  if (isPreparing) {
+    return Theme.colors.yellow;
+  }
+
+  return isWork ? Theme.colors.turquoise : Theme.colors.red;
+};
+
+const title = (isPreparing: boolean, isWork: boolean) => {
+  if (isPreparing) {
+    return 'Prepare';
+  }
+
+  return isWork ? 'Work' : 'Rest';
+};
 
 export const Play = () => {
   const [searchParams] = useSearchParams();
 
   const exerciseParam = searchParams.get('exercise');
   const roundParam = searchParams.get('round');
+  const prepareParam = searchParams.get('prepare');
   const workParam = searchParams.get('work');
   const restParam = searchParams.get('rest');
-  const sumParam = searchParams.get('sum');
 
-  if (exerciseParam === null || roundParam === null || workParam === null || restParam === null || sumParam === null) {
+  if (exerciseParam === null || roundParam === null || prepareParam === null || workParam === null || restParam === null) {
     return null;
   }
 
+  const originalPrepare = parseInt(prepareParam, 10);
+  const originalWork = parseInt(workParam, 10);
+  const originalRest = parseInt(restParam, 10);
   const originalExercise = useRef(parseInt(exerciseParam, 10));
   const originalRound = useRef(parseInt(roundParam, 10));
-
-  const workInterval = parseInt(workParam, 10);
-  const restInterval = parseInt(restParam, 10);
+  const originalSum = calcSum(
+    originalWork,
+    originalRest,
+    originalExercise.current,
+    originalRound.current,
+  );
 
   const firstUpdate = useRef(true);
+  const firstTick = useRef(true);
 
   const [finished, setFinished] = useState(false);
-  const [sum, setSum] = useState(parseInt(sumParam, 10));
+  const [sum, setSum] = useState(originalSum);
 
+  const [isPreparing, setIsPreparing] = useState(true);
   const [isWork, setIsWork] = useState(true);
   const [exercise, setExercise] = useState(originalExercise.current);
   const [round, setRound] = useState(originalRound.current);
-
-  useEffect(() => {
-    setSum((workInterval + restInterval) * exercise * round);
-  }, []);
 
   useEffect(() => {
     if (isWork && !firstUpdate.current) {
@@ -74,41 +105,78 @@ export const Play = () => {
   }, [exercise]);
 
   useEffect(() => {
-    if (round === 0) {
+    if (sum === 0) {
       setFinished(true);
     }
-  }, [round]);
+  }, [sum]);
 
   if (finished) {
     return (
-      <div>FINISHED</div>
+      <Finish />
     );
   }
 
   return (
-    <div>
-      <DebugInfo
-        workInterval={workInterval}
-        restInterval={restInterval}
-        exercise={exercise}
-        round={round}
-        sum={sum}
-      />
-      <div>
-        <h1>{isWork ? 'Work' : 'Rest'}</h1>
-        <Timer
-          interval={isWork ? workInterval : restInterval}
-          key={isWork ? 'work' : 'rest'}
-          onTick={() => {
-            setSum(sum - 1);
-          }}
-          onFinish={() => {
-            setIsWork(!isWork);
-          }}
+    <Box py={4} px={2} backgroundColor={bgColor(isPreparing, isWork)}>
+      <Typography fontSize={4} textAlign="center" fontWeight="bold" color={Theme.colors.white}>
+        {title(isPreparing, isWork)}
+      </Typography>
+      <Box mt={3}>
+        <StepCard label="Excercise" current={exercise} total={originalExercise.current} />
+        <StepCard label="Round" current={round} total={originalRound.current} />
+      </Box>
+      <Box my={2} display="flex" justifyContent="center">
+        {isPreparing ? (
+          <Box key="prepare" position="relative">
+            <TimerCircle size={400} time={originalPrepare} />
+            <Box position="absolute" top={150} left={100}>
+              <Timer
+                interval={originalPrepare}
+                onFinish={() => {
+                  setIsPreparing(false);
+                }}
+              />
+            </Box>
+          </Box>
+        ) : (
+          <Box key={isWork ? 'work' : 'rest'} position="relative">
+            <TimerCircle size={400} time={isWork ? originalWork : originalRest} />
+            <Box position="absolute" top={150} left={100}>
+              <Timer
+                interval={isWork ? originalWork : originalRest}
+                onTick={() => {
+                  if (!firstTick.current) {
+                    setSum((s) => s - 1);
+                  } else {
+                    firstTick.current = false;
+                  }
+                }}
+                onFinish={() => {
+                  setIsWork(!isWork);
+                }}
+              />
+            </Box>
+          </Box>
+        )}
+      </Box>
+      <Box display="flex" justifyContent="center">
+        <PauseButton
+          size={80}
+          onClick={() => { console.log('PAUSE clicked'); }}
         />
-      </div>
-      <StepCard label="Excercise" current={exercise} total={originalExercise.current} />
-      <StepCard label="Round" current={round} total={originalRound.current} />
-    </div>
+      </Box>
+      <Typography
+        mt={2}
+        textAlign="center"
+        fontWeight="bold"
+        color={Theme.colors.white}
+        onClick={() => { console.log('CANCEL clicked'); }}
+      >
+        CANCEL
+      </Typography>
+      <Box mt={2}>
+        <TimeRemaning sum={sum} />
+      </Box>
+    </Box>
   );
 };

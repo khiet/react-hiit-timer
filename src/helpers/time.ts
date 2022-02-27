@@ -1,5 +1,5 @@
-export const convertHMS = (second: string) => {
-  const parsedSecond = parseInt(second, 10);
+export const convertHMS = (second: string | number) => {
+  const parsedSecond = parseInt(second.toString(), 10);
 
   const hours = Math.floor(parsedSecond / 3600);
   const minutes = Math.floor((parsedSecond - (hours * 3600)) / 60);
@@ -11,3 +11,10 @@ export const convertHMS = (second: string) => {
 
   return `${labeledHours === '00' ? '' : `${labeledHours}:`}${labeledMinutes}:${labeledSeconds}`;
 };
+
+export const calcSum = (
+  work: number,
+  rest: number,
+  exercise: number,
+  round: number,
+) => (((work + rest) * exercise * round) - rest);
