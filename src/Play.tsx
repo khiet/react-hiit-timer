@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Timer } from './Timer';
 import { TimerCircle } from './TimerCircle';
 import { calcSum, convertHMS } from './helpers/time';
@@ -165,15 +165,16 @@ export const Play = () => {
           onClick={() => { console.log('PAUSE clicked'); }}
         />
       </Box>
-      <Typography
-        mt={2}
-        textAlign="center"
-        fontWeight="bold"
-        color={Theme.colors.white}
-        onClick={() => { console.log('CANCEL clicked'); }}
-      >
-        CANCEL
-      </Typography>
+      <Link to="/" style={{ textDecoration: 'none' }}>
+        <Typography
+          mt={2}
+          textAlign="center"
+          fontWeight="bold"
+          color={Theme.colors.white}
+        >
+          CANCEL
+        </Typography>
+      </Link>
       <Box mt={2}>
         <TimeRemaning sum={sum} />
       </Box>

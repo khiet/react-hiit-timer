@@ -6,5 +6,4 @@
 
 ## TODO
 - [ ] Implement the pause feature to pause the timer
-- [ ] Implement the cancel feature to go back to the main page (App)
 - [ ] Add tests
