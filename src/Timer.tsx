@@ -8,10 +8,16 @@ import countDownFinishSound from './assets/sounds/pop-up-off.mp3';
 import { Theme } from './styles/theme';
 import { useInterval } from './hooks/useInterval';
 
-export const Timer = ({ interval, onTick, onFinish }: {
+export const Timer = ({
+  interval,
+  onTick,
+  onFinish,
+  paused,
+}: {
   interval: number,
   onTick?: () => void,
-  onFinish: () => void
+  onFinish: () => void,
+  paused: boolean,
 }) => {
   const [time, setTime] = useState<number>(interval);
   const [playCowntDown] = useSound(countDownSound);
@@ -19,7 +25,7 @@ export const Timer = ({ interval, onTick, onFinish }: {
 
   useInterval(() => {
     setTime((t) => t - 1);
-  }, 1000);
+  }, paused ? null : 1000);
 
   useEffect(() => {
     if (time === 0) {

@@ -89,6 +89,8 @@ export const Play = () => {
   const [exercise, setExercise] = useState(originalExercise.current);
   const [round, setRound] = useState(originalRound.current);
 
+  const [paused, setPaused] = useState(false);
+
   useEffect(() => {
     if (isWork && !firstUpdate.current) {
       setExercise(exercise - 1);
@@ -128,19 +130,20 @@ export const Play = () => {
       <Box my={2} display="flex" justifyContent="center">
         {isPreparing ? (
           <Box key="prepare" position="relative">
-            <TimerCircle size={400} time={originalPrepare} />
+            <TimerCircle size={400} time={originalPrepare} paused={paused} />
             <Box position="absolute" top={150} left={100}>
               <Timer
                 interval={originalPrepare}
                 onFinish={() => {
                   setIsPreparing(false);
                 }}
+                paused={paused}
               />
             </Box>
           </Box>
         ) : (
           <Box key={isWork ? 'work' : 'rest'} position="relative">
-            <TimerCircle size={400} time={isWork ? originalWork : originalRest} />
+            <TimerCircle size={400} time={isWork ? originalWork : originalRest} paused={paused} />
             <Box position="absolute" top={150} left={100}>
               <Timer
                 interval={isWork ? originalWork : originalRest}
@@ -154,6 +157,7 @@ export const Play = () => {
                 onFinish={() => {
                   setIsWork(!isWork);
                 }}
+                paused={paused}
               />
             </Box>
           </Box>
@@ -162,7 +166,7 @@ export const Play = () => {
       <Box display="flex" justifyContent="center">
         <PauseButton
           size={80}
-          onClick={() => { console.log('PAUSE clicked'); }}
+          onClick={() => setPaused(!paused)}
         />
       </Box>
       <Link to="/" style={{ textDecoration: 'none' }}>

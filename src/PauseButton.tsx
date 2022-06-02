@@ -22,7 +22,11 @@ export const PauseButton = ({
         as={FontAwesomeIcon}
         icon={faCirclePlay}
         mx={4}
-        onClick={() => setPaused(false)}
+        onClick={() => {
+          setPaused(false);
+
+          onClick();
+        }}
         cursor="pointer"
       />
     );

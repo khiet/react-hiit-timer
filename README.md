@@ -5,5 +5,5 @@
 ## [Live App](https://react-hiit-timer.herokuapp.com/)
 
 ## TODO
-- [ ] Implement the pause feature to pause the timer
+
 - [ ] Add tests

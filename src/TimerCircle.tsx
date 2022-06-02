@@ -9,16 +9,18 @@ const PROGRESS_STEP_MS = 50;
 export const TimerCircle = ({
   size,
   time,
+  paused,
 } : {
   size: number,
   time: number,
+  paused: boolean,
 }) => {
   const center = size / 2;
   const [progress, setProgress] = useState<number>(0);
 
   useInterval(() => {
     setProgress((p) => p + (PROGRESS_STEP_MS / (time * 1000)));
-  }, PROGRESS_STEP_MS);
+  }, paused ? null : PROGRESS_STEP_MS);
 
   return (
     <svg width={size} height={size}>
