@@ -9,7 +9,7 @@ import { Finish } from './Finish';
 import { Theme } from './styles/theme';
 import { Typography } from './common/Typography';
 import { TimeRemaning } from './TimeRemaining';
-import { PauseButton } from './PauseButton';
+import { PlayOrPauseButton } from './PlayOrPauseButton';
 
 // eslint-disable-next-line no-unused-vars
 const DebugInfo = ({
@@ -164,7 +164,7 @@ export const Play = () => {
         )}
       </Box>
       <Box display="flex" justifyContent="center">
-        <PauseButton
+        <PlayOrPauseButton
           size={80}
           onClick={() => setPaused(!paused)}
         />
