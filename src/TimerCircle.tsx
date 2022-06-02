@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useInterval } from './hooks/useInterval';
 import { Theme } from './styles/theme';
 
 const RADIUS = 150;
@@ -15,15 +16,9 @@ export const TimerCircle = ({
   const center = size / 2;
   const [progress, setProgress] = useState<number>(0);
 
-  useEffect(() => {
-    const id = setInterval(() => {
-      setProgress((p) => p + (PROGRESS_STEP_MS / (time * 1000)));
-    }, PROGRESS_STEP_MS);
-
-    return () => {
-      clearInterval(id);
-    };
-  }, []);
+  useInterval(() => {
+    setProgress((p) => p + (PROGRESS_STEP_MS / (time * 1000)));
+  }, PROGRESS_STEP_MS);
 
   return (
     <svg width={size} height={size}>

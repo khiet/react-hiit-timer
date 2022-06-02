@@ -6,6 +6,7 @@ import { convertHMS } from './helpers/time';
 import countDownSound from './assets/sounds/boop.mp3';
 import countDownFinishSound from './assets/sounds/pop-up-off.mp3';
 import { Theme } from './styles/theme';
+import { useInterval } from './hooks/useInterval';
 
 export const Timer = ({ interval, onTick, onFinish }: {
   interval: number,
@@ -16,15 +17,9 @@ export const Timer = ({ interval, onTick, onFinish }: {
   const [playCowntDown] = useSound(countDownSound);
   const [playCowntDownFinish] = useSound(countDownFinishSound);
 
-  useEffect(() => {
-    const id = setInterval(() => {
-      setTime((t) => t - 1);
-    }, 1000);
-
-    return () => {
-      clearInterval(id);
-    };
-  }, []);
+  useInterval(() => {
+    setTime((t) => t - 1);
+  }, 1000);
 
   useEffect(() => {
     if (time === 0) {
