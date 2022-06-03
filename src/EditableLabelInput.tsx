@@ -7,10 +7,10 @@ export const EditableLabelInput = ({ value, onSubmit } : {
   // eslint-disable-next-line no-unused-vars
   onSubmit: (passedValue: string) => void
 }) => {
-  const [labelValue, setlabelValue] = useState<number>(value);
+  const [labelValue, setLabelValue] = useState<number>(value);
 
   const onFormSubmit = () => onSubmit(labelValue.toString());
-  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => setlabelValue(parseInt(e.target.value, 10));
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => setLabelValue(parseInt(e.target.value, 10));
 
   return (
     <Form onSubmit={onFormSubmit}>
